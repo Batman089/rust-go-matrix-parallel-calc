@@ -1,4 +1,4 @@
-mod mods{
+mod mods {
     pub mod file_mod;
     pub mod calculation_mod;
 }
@@ -25,9 +25,24 @@ fn get_matrix_size_from_user(matrix_name: &str) -> MatrixSize {
     }
 }
 
+fn get_num_workers_from_user() -> usize {
+    let mut input = String::new();
+    loop {
+        print!("How many logical CPU cores do you have? ");
+        io::stdout().flush().unwrap();
+        io::stdin().read_line(&mut input).unwrap();
+        match input.trim().parse::<usize>() {
+            Ok(num) if num > 0 => return num,
+            _ => println!("Invalid input. Please enter a positive integer."),
+        }
+        input.clear();
+    }
+}
+
 fn main() -> io::Result<()> {
     let matrix_size_a = get_matrix_size_from_user("Matrix A") as usize;
     let matrix_size_b = get_matrix_size_from_user("Matrix B") as usize;
+    let num_workers = get_num_workers_from_user();
 
     fs::create_dir_all("log")?;
     fs::create_dir_all("resources")?;
@@ -41,7 +56,7 @@ fn main() -> io::Result<()> {
     let matrix_a = read_matrix_from_file(source_matrix_a)?;
     let matrix_b = read_matrix_from_file(source_matrix_b)?;
 
-    match mods::calculation_mod::calculate_matrix(&matrix_a, &matrix_b) {
+    match mods::calculation_mod::calculate_matrix(&matrix_a, &matrix_b, num_workers) {
         Ok(result) => {}
         Err(e) => {
             println!("Error calculating matrix: {}", e);

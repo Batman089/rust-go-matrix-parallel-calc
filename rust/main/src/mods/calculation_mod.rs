@@ -1,22 +1,25 @@
 use std::fs::File;
-use std::io::{self, BufWriter, Write};
+use std::io::{BufWriter, Write};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Instant;
 
-pub fn calculate_matrix(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>]) -> Result<Vec<Vec<i32>>, String> {
+pub fn calculate_matrix(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>], num_workers: usize) -> Result<Vec<Vec<i32>>, String> {
+    // Check if matrix multiplication is possible
     if matrix_a[0].len() != matrix_b.len() {
         println!("Matrix multiplication is not possible due to dimension mismatch");
         return Err("Matrix multiplication is not possible due to dimension mismatch".to_string());
     }
 
     let start_time = Instant::now();
+
+    // Use Arc and Mutex to share the result between threads
     let result = Arc::new(Mutex::new(vec![vec![0; matrix_b[0].len()]; matrix_a.len()]));
-    let num_workers = 10;
     let chunk_size = matrix_a.len() / num_workers;
 
     let mut handles = vec![];
 
+    // Create threads to calculate the result matrix
     for i in 0..num_workers {
         let result = Arc::clone(&result);
         let matrix_a = matrix_a.to_vec();
