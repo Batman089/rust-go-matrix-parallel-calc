@@ -1,9 +1,4 @@
-mod mods {
-    pub mod file_mod;
-    pub mod calculation_mod;
-}
-
-use mods::file_mod::{generate_matrix_to_file, read_matrix_from_file, MatrixSize};
+use main::mods::file_mod::{generate_matrix_to_file, read_matrix_from_file, MatrixSize};
 use std::io::{self, Write};
 use std::fs;
 
@@ -44,11 +39,11 @@ fn main() -> io::Result<()> {
     let matrix_size_b = get_matrix_size_from_user("Matrix B") as usize;
     let num_workers = get_num_workers_from_user();
 
-    fs::create_dir_all("log")?;
-    fs::create_dir_all("resources")?;
+    fs::create_dir_all("./generated/log")?;
+    fs::create_dir_all("./generated/resources")?;
 
-    let source_matrix_a = "resources/matrix_a.txt";
-    let source_matrix_b = "resources/matrix_b.txt";
+    let source_matrix_a = "generated/resources/matrix_a.txt";
+    let source_matrix_b = "generated/resources/matrix_b.txt";
 
     generate_matrix_to_file(source_matrix_a, matrix_size_a)?;
     generate_matrix_to_file(source_matrix_b, matrix_size_b)?;
@@ -56,7 +51,7 @@ fn main() -> io::Result<()> {
     let matrix_a = read_matrix_from_file(source_matrix_a)?;
     let matrix_b = read_matrix_from_file(source_matrix_b)?;
 
-    match mods::calculation_mod::calculate_matrix(&matrix_a, &matrix_b, num_workers) {
+    match main::mods::calculation_mod::calculate_matrix(&matrix_a, &matrix_b, num_workers) {
         Ok(result) => {}
         Err(e) => {
             println!("Error calculating matrix: {}", e);

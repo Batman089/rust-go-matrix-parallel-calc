@@ -22,7 +22,7 @@ pub fn generate_matrix_to_file(filename: &str, size: usize) -> io::Result<()> {
     let duration = start_time.elapsed();
     println!("Matrix generation time: {:?}", duration);
 
-    let mut log_file = BufWriter::new(File::create("log/generate_matrix_files_log")?);
+    let mut log_file = BufWriter::new(File::create("./generated/log/generate_matrix_files_log.txt")?);
     writeln!(log_file, "Matrix generation Start time: {:?}", start_time)?;
     writeln!(log_file, "Matrix generation End time: {:?}", Instant::now())?;
     writeln!(log_file, "Matrix generation duration time: {:?}", duration)?;

@@ -5,6 +5,10 @@ use std::thread;
 use std::time::Instant;
 
 pub fn calculate_matrix(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>], num_workers: usize) -> Result<Vec<Vec<i32>>, String> {
+    if num_workers == 0 {
+        return Err("Number of workers must be greater than zero".to_string());
+    }
+
     // Check if matrix multiplication is possible
     if matrix_a[0].len() != matrix_b.len() {
         println!("Matrix multiplication is not possible due to dimension mismatch");
