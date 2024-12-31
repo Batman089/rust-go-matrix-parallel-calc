@@ -86,3 +86,20 @@ func CalculateMatrix(matrixA, matrixB [][]int, numWorkers int) [][]int {
 
 	return result
 }
+
+func CompareMatrices(matrixA, matrixB [][]int) bool {
+	if len(matrixA) != len(matrixB) {
+		return false
+	}
+	for i := range matrixA {
+		if len(matrixA[i]) != len(matrixB[i]) {
+			return false
+		}
+		for j := range matrixA[i] {
+			if matrixA[i][j] != matrixB[i][j] {
+				return false
+			}
+		}
+	}
+	return true
+}
