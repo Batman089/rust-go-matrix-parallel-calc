@@ -15,7 +15,7 @@ func GenerateMatrixToFile(filename string, size int) {
 	generateTimeStart := time.Now()
 
 	// Create log file for matrix generation
-	generateMatrixFilesLog, err := os.Create("go/log/generateMatrixFilesLog")
+	generateMatrixFilesLog, err := os.Create("./go/generated/log/generateMatrixFilesLog.txt")
 	matrixFile, err := os.Create(filename)
 	if err != nil {
 		fmt.Println("Error creating matrixFile:", err)

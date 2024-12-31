@@ -16,7 +16,12 @@ const (
 	Big    MatrixSize = 10000
 )
 
-func CalculateMatrix(matrixA, matrixB [][]int) [][]int {
+func CalculateMatrix(matrixA, matrixB [][]int, numWorkers int) [][]int {
+	if numWorkers == 0 {
+		fmt.Println("Number of workers must be greater than zero")
+		return nil
+	}
+
 	// Check if matrix multiplication is possible
 	if len(matrixA[0]) != len(matrixB) {
 		fmt.Println("Matrix multiplication is not possible due to dimension mismatch")
@@ -27,7 +32,7 @@ func CalculateMatrix(matrixA, matrixB [][]int) [][]int {
 	calcTimeStart := time.Now()
 
 	// Create log file for calculation time
-	calcTimeLog, errCreate := os.Create("go/log/calcTimeLog")
+	calcTimeLog, errCreate := os.Create("./go/generated/log/calcTimeLog.txt")
 	if errCreate != nil {
 		fmt.Println("Error creating calcTimeLog:", errCreate)
 		return nil
@@ -42,7 +47,6 @@ func CalculateMatrix(matrixA, matrixB [][]int) [][]int {
 
 	// Use WaitGroup to synchronize goroutines
 	var wg sync.WaitGroup
-	numWorkers := 10
 	chunkSize := len(matrixA) / numWorkers
 
 	// Launch goroutines to perform matrix multiplication in parallel
