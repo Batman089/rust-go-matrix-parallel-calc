@@ -41,12 +41,12 @@ func GenerateMatrixToFile(filename string, size int) {
 	}
 
 	// End time for matrix generation
-	generateTimeEnde := time.Now()
-	generateTimeTotal := generateTimeEnde.Sub(generateTimeStart)
+	generateTimeEnd := time.Now()
+	generateTimeTotal := generateTimeEnd.Sub(generateTimeStart)
 
 	fmt.Println("Matrix generation time:", generateTimeTotal)
 
-	fileTimeLogger(generateMatrixFilesLog, generateTimeStart, generateTimeEnde, generateTimeTotal)
+	fileTimeLogger(generateMatrixFilesLog, generateTimeStart, generateTimeEnd, generateTimeTotal)
 }
 
 func ReadMatrixFromFile(filename string) [][]int {
@@ -87,13 +87,13 @@ func ReadMatrixFromFile(filename string) [][]int {
 	return matrix
 }
 
-func fileTimeLogger(generateMatrixFilesLog *os.File, generateTimeStart time.Time, generateTimeEnde time.Time, generateTimeTotal time.Duration) {
+func fileTimeLogger(generateMatrixFilesLog *os.File, generateTimeStart time.Time, generateTimeEnd time.Time, generateTimeTotal time.Duration) {
 	logWriter := bufio.NewWriter(generateMatrixFilesLog)
 	_, err := logWriter.WriteString("Matrix generation Start time: " + generateTimeStart.String() + "\n")
 	if err != nil {
 		return
 	}
-	_, err = logWriter.WriteString("Matrix generation End time: " + generateTimeEnde.String() + "\n")
+	_, err = logWriter.WriteString("Matrix generation End time: " + generateTimeEnd.String() + "\n")
 	if err != nil {
 		return
 	}

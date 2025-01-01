@@ -113,13 +113,13 @@ func performParallelMultiplication(matrixA [][]int, matrixB [][]int, numWorkers 
 	wg.Wait()
 }
 
-func generateMatrixTimeLogger(writerLog *bufio.Writer, calcTimeStart, calcTimeEnde time.Time, calcTimeTotal time.Duration) {
+func generateMatrixTimeLogger(writerLog *bufio.Writer, calcTimeStart, calcTimeEnd time.Time, calcTimeTotal time.Duration) {
 	// Log the calculation time
 	_, err := writerLog.WriteString("Matrix multiplication Start time: " + calcTimeStart.String() + "\n")
 	if err != nil {
 		return
 	}
-	_, err = writerLog.WriteString("Matrix multiplication End time: " + calcTimeEnde.String() + "\n")
+	_, err = writerLog.WriteString("Matrix multiplication End time: " + calcTimeEnd.String() + "\n")
 	if err != nil {
 		return
 	}

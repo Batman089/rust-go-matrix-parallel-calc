@@ -67,5 +67,9 @@ func main() {
 
 	// Calculate the result matrix
 	result := matrixutils.CalculateMatrix(matrixA, matrixB, numWorkers)
-	_ = result
+	if result == nil {
+		fmt.Println("Matrix multiplication failed.")
+	} else {
+		fmt.Println("Matrix multiplication succeeded.")
+	}
 }
