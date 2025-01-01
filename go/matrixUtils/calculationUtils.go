@@ -17,15 +17,11 @@ const (
 )
 
 func CalculateMatrix(matrixA, matrixB [][]int, numWorkers int) [][]int {
-	if numWorkers == 0 {
-		fmt.Println("Number of workers must be greater than zero")
-		return nil
-	}
 
-	// Check if matrix multiplication is possible
-	if len(matrixA[0]) != len(matrixB) {
-		fmt.Println("Matrix multiplication is not possible due to dimension mismatch")
-		return nil
+	// Pre-checks
+	i, done := preCheck(matrixA, matrixB, numWorkers)
+	if done {
+		return i
 	}
 
 	// Start time for matrix multiplication
@@ -85,6 +81,33 @@ func CalculateMatrix(matrixA, matrixB [][]int, numWorkers int) [][]int {
 	fmt.Println("Matrix multiplication time:", calcTimeTotal)
 
 	return result
+}
+
+func preCheck(matrixA [][]int, matrixB [][]int, numWorkers int) ([][]int, bool) {
+	if numWorkers == 0 {
+		fmt.Println("Number of workers must be greater than zero")
+		return nil, true
+	}
+
+	// Check if matrices are nil
+	if matrixA == nil || matrixB == nil {
+		fmt.Println("Matrix is nil")
+		return nil, true
+	}
+
+	// Check if matrices are empty
+	if len(matrixA) == 0 || len(matrixB) == 0 {
+		fmt.Println("Matrix is empty")
+		return nil, true
+	}
+
+	// Check if matrix multiplication is possible
+	if len(matrixA[0]) != len(matrixB) {
+		fmt.Println("Matrix multiplication is not possible due to dimension mismatch")
+		return nil, true
+	}
+
+	return nil, false
 }
 
 func CompareMatrices(matrixA, matrixB [][]int) bool {

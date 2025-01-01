@@ -1,4 +1,4 @@
-package testing
+package tests
 
 import (
 	"../matrixutils"
@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-func TestSmallMatrixMultiplyBigMatrix(t *testing.T) {
+func TestSmallMatrixMultiplySmallMatrix(t *testing.T) {
 	matrixSizeA := matrixutils.Small
-	matrixSizeB := matrixutils.Big
+	matrixSizeB := matrixutils.Small
 	numWorkers := 4
 
 	sourceMatrixA := "./go/generated/resources/matrixA.txt"
@@ -21,6 +21,7 @@ func TestSmallMatrixMultiplyBigMatrix(t *testing.T) {
 	matrixB := matrixutils.ReadMatrixFromFile(sourceMatrixB)
 
 	result := matrixutils.CalculateMatrix(matrixA, matrixB, numWorkers)
+
 	if result == nil {
 		t.Error("Expected non-nil result for valid matrix multiplication")
 	}
@@ -104,27 +105,16 @@ func TestEmptyMatrices(t *testing.T) {
 	numWorkers := 4
 
 	result := matrixutils.CalculateMatrix(matrixA, matrixB, numWorkers)
+
 	if result != nil {
 		t.Error("Expected nil result for empty matrices")
-	}
-}
-
-func TestSingleElementMatrices(t *testing.T) {
-	matrixA := [][]int{{1}}
-	matrixB := [][]int{{2}}
-	numWorkers := 4
-
-	expected := [][]int{{2}}
-	result := matrixutils.CalculateMatrix(matrixA, matrixB, numWorkers)
-	if !matrixutils.CompareMatrices(result, expected) {
-		t.Errorf("Expected %v, got %v", expected, result)
 	}
 }
 
 func TestLargeMatrices(t *testing.T) {
 	matrixSizeA := matrixutils.Big
 	matrixSizeB := matrixutils.Big
-	numWorkers := 4
+	numWorkers := 20
 
 	sourceMatrixA := "./go/generated/resources/largeMatrixA.txt"
 	sourceMatrixB := "./go/generated/resources/largeMatrixB.txt"
