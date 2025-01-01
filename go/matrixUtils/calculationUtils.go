@@ -24,15 +24,14 @@ func CalculateMatrix(matrixA, matrixB [][]int, numWorkers int) [][]int {
 		return i
 	}
 
-	// Start time for matrix multiplication
-	calcTimeStart := time.Now()
-
 	// Create log file for calculation time
 	calcTimeLog, errCreate := os.Create("./go/generated/log/calcTimeLog.txt")
 	if errCreate != nil {
 		fmt.Println("Error creating calcTimeLog:", errCreate)
 		return nil
 	}
+
+	calcTimeStart := time.Now()
 	writerLog := bufio.NewWriter(calcTimeLog)
 
 	// Initialize result matrix
@@ -43,26 +42,28 @@ func CalculateMatrix(matrixA, matrixB [][]int, numWorkers int) [][]int {
 
 	// Use WaitGroup to synchronize goroutines
 	var wg sync.WaitGroup
-	chunkSize := len(matrixA) / numWorkers
+	rowChannel := make(chan int, len(matrixA))
 
 	// Launch goroutines to perform matrix multiplication in parallel
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
-		go func(startRow int) {
+		go func() {
 			defer wg.Done()
-			endRow := startRow + chunkSize
-			if endRow > len(matrixA) {
-				endRow = len(matrixA)
-			}
-			for row := startRow; row < endRow; row++ {
+			for row := range rowChannel {
 				for col := 0; col < len(matrixB[0]); col++ {
 					for k := 0; k < len(matrixB); k++ {
 						result[row][col] += matrixA[row][k] * matrixB[k][col]
 					}
 				}
 			}
-		}(i * chunkSize)
+		}()
 	}
+
+	// Send row indices to the channel
+	for row := 0; row < len(matrixA); row++ {
+		rowChannel <- row
+	}
+	close(rowChannel)
 
 	// Wait for all goroutines to finish
 	wg.Wait()
@@ -71,20 +72,13 @@ func CalculateMatrix(matrixA, matrixB [][]int, numWorkers int) [][]int {
 	calcTimeEnde := time.Now()
 	calcTimeTotal := calcTimeEnde.Sub(calcTimeStart)
 
-	// Log the calculation time
-	writerLog.WriteString("Matrix multiplication Start time: " + calcTimeStart.String() + "\n")
-	writerLog.WriteString("Matrix multiplication End time: " + calcTimeEnde.String() + "\n")
-	writerLog.WriteString("Matrix multiplication duration time: " + calcTimeTotal.String() + "\n")
-	writerLog.Flush()
-
-	fmt.Println("Matrix multiplication completed.")
-	fmt.Println("Matrix multiplication time:", calcTimeTotal)
+	timeLogger(writerLog, calcTimeStart, calcTimeEnde, calcTimeTotal)
 
 	return result
 }
 
 func preCheck(matrixA [][]int, matrixB [][]int, numWorkers int) ([][]int, bool) {
-	if numWorkers == 0 {
+	if numWorkers <= 0 {
 		fmt.Println("Number of workers must be greater than zero")
 		return nil, true
 	}
@@ -125,4 +119,15 @@ func CompareMatrices(matrixA, matrixB [][]int) bool {
 		}
 	}
 	return true
+}
+
+func timeLogger(writerLog *bufio.Writer, calcTimeStart time.Time, calcTimeEnde time.Time, calcTimeTotal time.Duration) {
+	// Log the calculation time
+	writerLog.WriteString("Matrix multiplication Start time: " + calcTimeStart.String() + "\n")
+	writerLog.WriteString("Matrix multiplication End time: " + calcTimeEnde.String() + "\n")
+	writerLog.WriteString("Matrix multiplication duration time: " + calcTimeTotal.String() + "\n")
+	writerLog.Flush()
+
+	fmt.Println("Matrix multiplication completed.")
+	fmt.Println("Matrix multiplication time:", calcTimeTotal)
 }

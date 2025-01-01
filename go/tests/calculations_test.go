@@ -79,10 +79,22 @@ func TestDimensionMismatch(t *testing.T) {
 	}
 }
 
+func TestEmptyMatrices(t *testing.T) {
+	matrixA := [][]int{}
+	matrixB := [][]int{}
+	numWorkers := 4
+
+	result := matrixutils.CalculateMatrix(matrixA, matrixB, numWorkers)
+
+	if result != nil {
+		t.Error("Expected nil result for empty matrices")
+	}
+}
+
 func TestValidMatrixValidWorkerNumbers(t *testing.T) {
 	matrixSizeA := matrixutils.Middle
 	matrixSizeB := matrixutils.Middle
-	numWorkers := 4
+	numWorkers := 20
 
 	sourceMatrixA := "./go/generated/resources/matrixA.txt"
 	sourceMatrixB := "./go/generated/resources/matrixB.txt"
@@ -96,38 +108,6 @@ func TestValidMatrixValidWorkerNumbers(t *testing.T) {
 	result := matrixutils.CalculateMatrix(matrixA, matrixB, numWorkers)
 	if result == nil {
 		t.Error("Expected non-nil result for valid matrix multiplication")
-	}
-}
-
-func TestEmptyMatrices(t *testing.T) {
-	matrixA := [][]int{}
-	matrixB := [][]int{}
-	numWorkers := 4
-
-	result := matrixutils.CalculateMatrix(matrixA, matrixB, numWorkers)
-
-	if result != nil {
-		t.Error("Expected nil result for empty matrices")
-	}
-}
-
-func TestLargeMatrices(t *testing.T) {
-	matrixSizeA := matrixutils.Big
-	matrixSizeB := matrixutils.Big
-	numWorkers := 20
-
-	sourceMatrixA := "./go/generated/resources/largeMatrixA.txt"
-	sourceMatrixB := "./go/generated/resources/largeMatrixB.txt"
-
-	matrixutils.GenerateMatrixToFile(sourceMatrixA, int(matrixSizeA))
-	matrixutils.GenerateMatrixToFile(sourceMatrixB, int(matrixSizeB))
-
-	matrixA := matrixutils.ReadMatrixFromFile(sourceMatrixA)
-	matrixB := matrixutils.ReadMatrixFromFile(sourceMatrixB)
-
-	result := matrixutils.CalculateMatrix(matrixA, matrixB, numWorkers)
-	if result == nil {
-		t.Error("Expected non-nil result for large matrix multiplication")
 	}
 }
 

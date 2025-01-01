@@ -16,12 +16,17 @@ func GenerateMatrixToFile(filename string, size int) {
 
 	// Create log file for matrix generation
 	generateMatrixFilesLog, err := os.Create("./go/generated/log/generateMatrixFilesLog.txt")
+	if err != nil {
+		fmt.Println("Error creating generateMatrixFilesLog:", err)
+		return
+	}
+	defer generateMatrixFilesLog.Close()
+
 	matrixFile, err := os.Create(filename)
 	if err != nil {
 		fmt.Println("Error creating matrixFile:", err)
 		return
 	}
-	defer generateMatrixFilesLog.Close()
 	defer matrixFile.Close()
 
 	// Seed the random number generator
