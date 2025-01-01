@@ -43,25 +43,30 @@ func GenerateMatrixToFile(filename string, size int) {
 	// End time for matrix generation
 	generateTimeEnde := time.Now()
 	generateTimeTotal := generateTimeEnde.Sub(generateTimeStart)
+
 	fmt.Println("Matrix generation time:", generateTimeTotal)
 
-	// Log the generation time
-	logWriter := bufio.NewWriter(generateMatrixFilesLog)
-	logWriter.WriteString("Matrix generation Start time: " + generateTimeStart.String() + "\n")
-	logWriter.WriteString("Matrix generation End time: " + generateTimeEnde.String() + "\n")
-	logWriter.WriteString("Matrix generation time: " + generateTimeTotal.String() + "\n")
-
-	writer.Flush()
-	logWriter.Flush()
+	fileTimeLogger(generateMatrixFilesLog, generateTimeStart, generateTimeEnde, generateTimeTotal)
 }
 
 func ReadMatrixFromFile(filename string) [][]int {
-	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
+	handleError := func(err error, message string) [][]int {
+		if err != nil {
+			fmt.Println(message, err)
+			return nil
+		}
 		return nil
 	}
-	defer file.Close()
+
+	file, err := os.Open(filename)
+	if handleError(err, "Error opening file:") != nil {
+		return nil
+	}
+	defer func() {
+		if err := file.Close(); err != nil {
+			fmt.Println("Error closing file:", err)
+		}
+	}()
 
 	var matrix [][]int
 	scanner := bufio.NewScanner(file)
@@ -75,9 +80,30 @@ func ReadMatrixFromFile(filename string) [][]int {
 		matrix = append(matrix, row)
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
+	if handleError(scanner.Err(), "Error reading file:") != nil {
+		return nil
 	}
 
 	return matrix
+}
+
+func fileTimeLogger(generateMatrixFilesLog *os.File, generateTimeStart time.Time, generateTimeEnde time.Time, generateTimeTotal time.Duration) {
+	logWriter := bufio.NewWriter(generateMatrixFilesLog)
+	_, err := logWriter.WriteString("Matrix generation Start time: " + generateTimeStart.String() + "\n")
+	if err != nil {
+		return
+	}
+	_, err = logWriter.WriteString("Matrix generation End time: " + generateTimeEnde.String() + "\n")
+	if err != nil {
+		return
+	}
+	_, err = logWriter.WriteString("Matrix generation time: " + generateTimeTotal.String() + "\n")
+	if err != nil {
+		return
+	}
+
+	err = logWriter.Flush()
+	if err != nil {
+		return
+	}
 }
