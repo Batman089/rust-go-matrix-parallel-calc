@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"../matrixutils"
+	"github.com/Batman089/rust-go-matrix-parallel-calc/go/matrixutils"
 	"os"
 	"testing"
 )

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./matrixutils"
 	"bufio"
 	"fmt"
+	"github.com/Batman089/rust-go-matrix-parallel-calc/go/matrixutils"
 	"os"
 	"strconv"
 	"strings"
