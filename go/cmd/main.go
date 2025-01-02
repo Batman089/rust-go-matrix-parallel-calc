@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/Batman089/rust-go-matrix-parallel-calc/go/matrixutils"
+	matrixutils "github.com/Batman089/rust-go-matrix-parallel-calc/go/matrixutils"
 	"os"
 	"strconv"
 	"strings"
