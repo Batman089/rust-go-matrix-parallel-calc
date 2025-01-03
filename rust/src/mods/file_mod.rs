@@ -9,6 +9,10 @@ pub enum MatrixSize {
     Big = 10000,
 }
 
+pub const LOG_DIR: &str = "./generated/log";
+pub const RESOURCES_DIR: &str = "./generated/resources";
+pub const CALC_TIME_LOG: &str = "calc_time_log";
+
 pub fn generate_matrix_to_file(filename: &str, size: usize) -> io::Result<()> {
     let start_time = Instant::now();
     let mut file = create_file(filename)?;
@@ -36,7 +40,7 @@ fn log_generation_time(start_time: Instant) -> io::Result<()> {
     let duration = start_time.elapsed();
     println!("Matrix generation time: {:?}", duration);
 
-    let mut log_file = BufWriter::new(File::create("./generated/log/generate_matrix_files_log.txt")?);
+    let mut log_file = BufWriter::new(File::create(format!("{}/generate_matrix_files_log.txt", LOG_DIR))?);
     writeln!(log_file, "Matrix generation Start time: {:?}", start_time)?;
     writeln!(log_file, "Matrix generation End time: {:?}", Instant::now())?;
     writeln!(log_file, "Matrix generation duration time: {:?}", duration)?;
@@ -50,8 +54,13 @@ pub fn read_matrix_from_file(filename: &str) -> io::Result<Vec<Vec<i32>>> {
 
     for line in file.lines() {
         let line = line?;
-        let row: Vec<i32> = line.split_whitespace().map(|s| s.parse().unwrap()).collect();
-        matrix.push(row);
+        let row: Result<Vec<i32>, _> = line.split_whitespace()
+            .map(|s| s.parse())
+            .collect();
+        match row {
+            Ok(parsed_row) => matrix.push(parsed_row),
+            Err(e) => return Err(io::Error::new(io::ErrorKind::InvalidData, e.to_string())),
+        }
     }
 
     Ok(matrix)

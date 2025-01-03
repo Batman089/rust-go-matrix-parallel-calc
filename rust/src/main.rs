@@ -1,4 +1,4 @@
-use main::mods::file_mod::{generate_matrix_to_file, read_matrix_from_file, MatrixSize};
+use main::mods::file_mod::{generate_matrix_to_file, read_matrix_from_file, MatrixSize, LOG_DIR, RESOURCES_DIR};
 use std::io::{self, Write};
 use std::fs;
 
@@ -6,8 +6,8 @@ fn get_matrix_size_from_user(matrix_name: &str) -> MatrixSize {
     let mut input = String::new();
     loop {
         print!("Enter size for {} matrix (small, middle, big): ", matrix_name);
-        io::stdout().flush().unwrap();
-        io::stdin().read_line(&mut input).unwrap();
+        io::stdout().flush().expect("Failed to flush stdout");
+        io::stdin().read_line(&mut input).expect("Failed to read line");
         input = input.trim().to_lowercase();
 
         match input.as_str() {
@@ -24,8 +24,8 @@ fn get_num_workers_from_user() -> usize {
     let mut input = String::new();
     loop {
         print!("How many logical CPU cores do you have? ");
-        io::stdout().flush().unwrap();
-        io::stdin().read_line(&mut input).unwrap();
+        io::stdout().flush().expect("Failed to flush stdout");
+        io::stdin().read_line(&mut input).expect("Failed to read line");
         match input.trim().parse::<usize>() {
             Ok(num) if num > 0 => return num,
             _ => println!("Invalid input. Please enter a positive integer."),
@@ -35,20 +35,20 @@ fn get_num_workers_from_user() -> usize {
 }
 
 fn setup_directories() -> io::Result<()> {
-    fs::create_dir_all("./generated/log")?;
-    fs::create_dir_all("./generated/resources")?;
+    fs::create_dir_all(LOG_DIR)?;
+    fs::create_dir_all(RESOURCES_DIR)?;
     Ok(())
 }
 
 fn generate_and_read_matrices(matrix_size_a: usize, matrix_size_b: usize) -> io::Result<(Vec<Vec<i32>>, Vec<Vec<i32>>)> {
-    let source_matrix_a = "generated/resources/matrix_a.txt";
-    let source_matrix_b = "generated/resources/matrix_b.txt";
+    let source_matrix_a = format!("{}/matrix_a.txt", RESOURCES_DIR);
+    let source_matrix_b = format!("{}/matrix_b.txt", RESOURCES_DIR);
 
-    generate_matrix_to_file(source_matrix_a, matrix_size_a)?;
-    generate_matrix_to_file(source_matrix_b, matrix_size_b)?;
+    generate_matrix_to_file(&source_matrix_a, matrix_size_a)?;
+    generate_matrix_to_file(&source_matrix_b, matrix_size_b)?;
 
-    let matrix_a = read_matrix_from_file(source_matrix_a)?;
-    let matrix_b = read_matrix_from_file(source_matrix_b)?;
+    let matrix_a = read_matrix_from_file(&source_matrix_a)?;
+    let matrix_b = read_matrix_from_file(&source_matrix_b)?;
 
     Ok((matrix_a, matrix_b))
 }
