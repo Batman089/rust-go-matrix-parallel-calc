@@ -34,14 +34,13 @@ fn get_num_workers_from_user() -> usize {
     }
 }
 
-fn main() -> io::Result<()> {
-    let matrix_size_a = get_matrix_size_from_user("Matrix A") as usize;
-    let matrix_size_b = get_matrix_size_from_user("Matrix B") as usize;
-    let num_workers = get_num_workers_from_user();
-
+fn setup_directories() -> io::Result<()> {
     fs::create_dir_all("./generated/log")?;
     fs::create_dir_all("./generated/resources")?;
+    Ok(())
+}
 
+fn generate_and_read_matrices(matrix_size_a: usize, matrix_size_b: usize) -> io::Result<(Vec<Vec<i32>>, Vec<Vec<i32>>)> {
     let source_matrix_a = "generated/resources/matrix_a.txt";
     let source_matrix_b = "generated/resources/matrix_b.txt";
 
@@ -51,8 +50,22 @@ fn main() -> io::Result<()> {
     let matrix_a = read_matrix_from_file(source_matrix_a)?;
     let matrix_b = read_matrix_from_file(source_matrix_b)?;
 
+    Ok((matrix_a, matrix_b))
+}
+
+fn main() -> io::Result<()> {
+    let matrix_size_a = get_matrix_size_from_user("Matrix A") as usize;
+    let matrix_size_b = get_matrix_size_from_user("Matrix B") as usize;
+    let num_workers = get_num_workers_from_user();
+
+    setup_directories()?;
+
+    let (matrix_a, matrix_b) = generate_and_read_matrices(matrix_size_a, matrix_size_b)?;
+
     match main::mods::calculation_mod::calculate_matrix(&matrix_a, &matrix_b, num_workers) {
-        Ok(result) => {}
+        Ok(_result) => {
+            println!("Matrix multiplication succeeded.");
+        }
         Err(e) => {
             println!("Error calculating matrix: {}", e);
         }

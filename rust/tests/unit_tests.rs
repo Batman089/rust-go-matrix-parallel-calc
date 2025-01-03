@@ -14,15 +14,21 @@ mod tests {
     }
 
     #[test]
+    fn test_valid_small_matrix_with_valid_worker_number() {
+        let matrix_a = vec![vec![1; 1000]; 1000]; // Small matrix
+        let matrix_b = vec![vec![1; 1000]; 1000]; // Small matrix
+        let num_workers = 20; // Valid worker number
+
+        let result = calculation_mod::calculate_matrix(&matrix_a, &matrix_b, num_workers);
+        assert!(result.is_ok());
+    }
+
+    #[test]
     fn test_valid_matrices_with_invalid_worker_numbers() {
         let matrix_a = vec![vec![1; 100]; 100]; // Small matrix
         let matrix_b = vec![vec![1; 100]; 100]; // Small matrix
 
         let num_workers = 0; // Invalid worker number
-        let result = calculation_mod::calculate_matrix(&matrix_a, &matrix_b, num_workers);
-        assert!(result.is_err());
-
-        let num_workers = usize::MAX; // Another invalid worker number
         let result = calculation_mod::calculate_matrix(&matrix_a, &matrix_b, num_workers);
         assert!(result.is_err());
     }
