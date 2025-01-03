@@ -2,9 +2,24 @@
 
 This project implements parallel matrix multiplication in Rust. It includes an enhanced version of the algorithm that resolves issues from previous iterations and provides efficient, concurrent computation.
 
-## How to Run
+## Table of Contents
+1. [Getting Started](#getting-started)
+2. [Dependencies](#dependencies)
+3. [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+4. [Program Structure](#program-structure)
+    - [Flow of the Program](#flow-of-the-program)
+    - [Diagram](#diagram)
+5. [Parallel Principle in Rust](#parallel-principle-in-rust)
+6. [Performance Analysis](#performance-analysis)
+    - [Benchmark Results](#benchmark-results)
+7. [Generated Folder](#generated-folder)
+8. [References](#references)
 
-1. **Generate Matrices**:
+
+## Getting Started
+
+1. **Run the program**:
    ```sh
    cargo run --release
    ```
@@ -20,6 +35,30 @@ This project implements parallel matrix multiplication in Rust. It includes an e
 - `rayon` crate for parallelism
 - `serde` and `serde_json` crates for matrix file handling
 - `log` and `env_logger` crates for logging
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Dependencies Not Installed**:
+   Ensure all required dependencies for the Rust project are installed. Run:
+   ```sh
+   cargo build
+   ```
+
+2. **Insufficient System Resources**:
+   Running with too many threads on a system with limited CPU cores may degrade performance. Adjust the worker/thread count accordingly.
+
+3. **File Permissions**:
+   Make sure the program has read/write access to the `generated` folder.
+
+4. **Compilation Errors**:
+   Ensure the correct version of Rust (1.60+) is installed.
+
+5. **Unexpected Output**:
+   Verify the input matrix dimensions and the worker count for consistency.
+
+For additional help, please refer to the [Issues section on GitHub](https://github.com/Batman089/rust-go-matrix-parallel-calc/issues) or open a new ticket.
 
 ## Program Structure
 
@@ -39,7 +78,7 @@ The project is organized into the following key components:
 4. Parallel multiplication is performed.
 5. Results and logs are stored in the `generated/log` folder.
 
-![Terminal Example](..\doc\terminal_go.png)
+![Terminal Example](../doc/terminal_rust.png)
 
 ### Diagram
 
@@ -123,7 +162,7 @@ This parallel approach leverages Rust's concurrency model to efficiently perform
 The program allows users to optimize the number of worker threads based on the system's capabilities and the size of the matrices. 
 So that every single calculationsunit of the computer is used to its full potential and provides the best performance possible.
 
-![Terminal Example](..\doc\running_calc.png)
+![Terminal Example](../doc/running_calc.png)
 
 ## Performance Analysis
 
@@ -135,7 +174,7 @@ The benchmark results show that the computation time decreases as the number of 
 
 The optimal number of workers depends on the matrix size and the system's hardware capabilities. After each successful run, the program logs the computation time for each worker count, allowing users to analyze the performance and choose the optimal configuration. These results can be used to fine-tune the program for specific use cases. These are accessible in the `rust/generated/log` directory.
 
-### Generated Folder
+## Generated Folder
 
 The `generated` folder contains dynamically created files:
 - `resources`: Stores the matrix files generated during runtime.
