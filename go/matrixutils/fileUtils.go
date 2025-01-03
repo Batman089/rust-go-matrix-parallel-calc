@@ -14,22 +14,21 @@ func GenerateMatrixToFile(filename string, size int) {
 	// Start time for matrix generation
 	generateTimeStart := time.Now()
 
-	// Create log file for matrix generation
-	generateMatrixFilesLog, err := os.Create("./go/generated/log/generateMatrixFilesLog.txt")
-	if err != nil {
-		fmt.Println("Error creating generateMatrixFilesLog:", err)
+	generateMatrixFilesLog, matrixFile, done := createFiles(filename)
+	if done {
 		return
 	}
-	defer generateMatrixFilesLog.Close()
 
-	matrixFile, err := os.Create(filename)
-	if err != nil {
-		fmt.Println("Error creating matrixFile:", err)
-		return
-	}
+	defer generateMatrixFilesLog.Close()
 	defer matrixFile.Close()
 
-	// Seed the random number generator
+	writeInFile(matrixFile, size)
+
+	generateTimeEnd := time.Now()
+	fileTimeLogger(generateMatrixFilesLog, generateTimeStart, generateTimeEnd, generateTimeEnd.Sub(generateTimeStart))
+}
+
+func writeInFile(matrixFile *os.File, size int) {
 	rand.Seed(time.Now().UnixNano())
 	writer := bufio.NewWriter(matrixFile)
 	for i := 0; i < size; i++ {
@@ -40,13 +39,23 @@ func GenerateMatrixToFile(filename string, size int) {
 		writer.WriteString(strings.Join(row, " ") + "\n")
 	}
 
-	// End time for matrix generation
-	generateTimeEnd := time.Now()
-	generateTimeTotal := generateTimeEnd.Sub(generateTimeStart)
+	writer.Flush()
+}
 
-	fmt.Println("Matrix generation time:", generateTimeTotal)
+func createFiles(filename string) (*os.File, *os.File, bool) {
+	err := os.MkdirAll("../go/generated/resources", os.ModePerm)
+	if err != nil {
+		return nil, nil, true
+	}
 
-	fileTimeLogger(generateMatrixFilesLog, generateTimeStart, generateTimeEnd, generateTimeTotal)
+	// Create log file for matrix generation
+	generateMatrixFilesLog, err := os.Create("./go/generated/log/generateMatrixFilesLog.txt")
+	matrixFile, err := os.Create(filename)
+	if err != nil {
+		fmt.Println("Error creating matrixFile:", err)
+		return nil, nil, true
+	}
+	return generateMatrixFilesLog, matrixFile, false
 }
 
 func ReadMatrixFromFile(filename string) [][]int {
@@ -89,6 +98,7 @@ func ReadMatrixFromFile(filename string) [][]int {
 
 func fileTimeLogger(generateMatrixFilesLog *os.File, generateTimeStart time.Time, generateTimeEnd time.Time, generateTimeTotal time.Duration) {
 	logWriter := bufio.NewWriter(generateMatrixFilesLog)
+	fmt.Println("Matrix generation time:", generateTimeTotal)
 	_, err := logWriter.WriteString("Matrix generation Start time: " + generateTimeStart.String() + "\n")
 	if err != nil {
 		return
