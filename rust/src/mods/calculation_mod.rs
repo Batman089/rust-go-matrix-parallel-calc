@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::sync::{Arc, Mutex};
+use std::sync::mpsc;
 use std::thread;
 use std::time::Instant;
 
@@ -10,14 +10,12 @@ pub fn calculate_matrix(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>], num_worker
     }
 
     let (start_time, mut log_file) = create_log_file()?;
-    let result = initialize_result_matrix(matrix_a, matrix_b);
-
-    perform_parallel_multiplication(matrix_a, matrix_b, num_workers, &result);
+    let result = perform_parallel_multiplication(matrix_a, matrix_b, num_workers);
 
     let duration = start_time.elapsed();
     log_calculation_time(&mut log_file, start_time, duration)?;
 
-    Ok(Arc::try_unwrap(result).unwrap().into_inner().unwrap())
+    Ok(result)
 }
 
 fn pre_check(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>], num_workers: usize) -> Option<String> {
@@ -42,40 +40,49 @@ fn create_log_file() -> Result<(Instant, BufWriter<File>), String> {
     Ok((Instant::now(), BufWriter::new(log_file)))
 }
 
-fn initialize_result_matrix(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>]) -> Arc<Mutex<Vec<Vec<i32>>>> {
-    Arc::new(Mutex::new(vec![vec![0; matrix_b[0].len()]; matrix_a.len()]))
+fn initialize_result_matrix(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>]) -> Vec<Vec<i32>> {
+    vec![vec![0; matrix_b[0].len()]; matrix_a.len()]
 }
-
-fn perform_parallel_multiplication(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>], num_workers: usize, result: &Arc<Mutex<Vec<Vec<i32>>>>) {
-    let chunk_size = matrix_a.len() / num_workers;
+fn perform_parallel_multiplication(matrix_a: &[Vec<i32>], matrix_b: &[Vec<i32>], num_workers: usize) -> Vec<Vec<i32>> {
+    let (tx, rx) = mpsc::channel();
+    let chunk_size = (matrix_a.len() + num_workers - 1) / num_workers;
     let mut handles = vec![];
 
     for i in 0..num_workers {
-        let result = Arc::clone(result);
+        let tx = tx.clone();
         let matrix_a = matrix_a.to_vec();
         let matrix_b = matrix_b.to_vec();
         let handle = thread::spawn(move || {
             let start_row = i * chunk_size;
-            let end_row = if i == num_workers - 1 {
-                matrix_a.len()
-            } else {
-                start_row + chunk_size
-            };
+            let end_row = (start_row + chunk_size).min(matrix_a.len());
+            let mut partial_result = vec![vec![0; matrix_b[0].len()]; end_row - start_row];
 
             for row in start_row..end_row {
                 for col in 0..matrix_b[0].len() {
                     for k in 0..matrix_b.len() {
-                        result.lock().unwrap()[row][col] += matrix_a[row][k] * matrix_b[k][col];
+                        partial_result[row - start_row][col] += matrix_a[row][k] * matrix_b[k][col];
                     }
                 }
             }
+            tx.send((start_row, partial_result)).expect("Failed to send partial result");
         });
         handles.push(handle);
     }
 
     for handle in handles {
-        handle.join().unwrap();
+        handle.join().expect("Thread panicked");
     }
+
+    drop(tx); // Close the channel
+
+    let mut result = vec![vec![0; matrix_b[0].len()]; matrix_a.len()];
+    for (start_row, partial_result) in rx {
+        for (i, row) in partial_result.into_iter().enumerate() {
+            result[start_row + i] = row;
+        }
+    }
+
+    result
 }
 
 fn log_calculation_time(log_file: &mut BufWriter<File>, start_time: Instant, duration: std::time::Duration) -> Result<(), String> {
