@@ -1,9 +1,33 @@
 # Parallel Matrix Multiplication in Go and Rust
 
 This project demonstrates parallel matrix multiplication implemented in both Go and Rust. The primary focus is on comparing the concurrency and parallel programming features of these languages rather than optimizing mathematical algorithms.
+- In this README, you will find generell information on how to run the programs, the project structure, the flow of the program, and a comparison of parallelization features in Rust and Go.
+- For detailed information on each implementation, refer to the individual `README.md` files in the `go` and `rust` directories.
+   - [Go Project](go/README.md)
+   - [Rust Project](rust/README.md)
 
-## How to Run the Project
+## Features
 
+- Parallelized matrix multiplication.
+- Customizable concurrency levels (threads/workers).
+- Performance logging to evaluate execution times.
+- Implementations in both Go and Rust for comparison.
+
+## Table of Contents
+1. [Getting Started](#getting-started)
+2. [Similarities Between Go and Rust Projects](#similarities-between-go-and-rust-projects)
+3. [Project Structure](#project-structure)
+4. [Program Flow](#program-flow)
+5. [Comparison of Parallelization Features in Rust and Go](#comparison-of-parallelization-features-in-rust-and-go)
+6. [Generated Folder](#generated-folder)
+7. [Side effects of the Program](#side-effects-of-the-program)
+8. [Troubleshooting](#troubleshooting)
+9. [Contact](#contact)
+10. [Additional Information](#additional-information)
+11. [References](#references)
+12. [License](#license)
+
+## Getting Started
 ### Go Project
 1. **Generate Matrices**:
    ```sh

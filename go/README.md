@@ -3,9 +3,21 @@
 
 This program demonstrates parallel matrix multiplication using Go. It generates matrices, performs multiplication in parallel, and logs the computation time.
 
-## How to Run
+## Table of Contents
+1. [Getting Started](#getting-started)
+2. [Dependencies](#dependencies)
+3. [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+4. [Program Structure](#program-structure)
+5. [Parallel Principle in Go](#parallel-principle-in-go)
+6. [Performance Benchmark](#performance-benchmark)
+7. [Generated Folder](#generated-folder)
+8. [References](#references)
 
-1. **Generate Matrices**:
+
+## Getting Started
+
+1. **Run the program**:
    ```sh
    go run cmd/main.go
    ```
@@ -19,6 +31,30 @@ This program demonstrates parallel matrix multiplication using Go. It generates 
 
 - Go 1.16+
 - `sync` package for concurrency
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Dependencies Not Installed**:
+   Ensure all required dependencies for the Go project are installed. Run:
+   ```sh
+   go mod tidy
+   ```
+
+2. **Insufficient System Resources**:
+   Running with too many goroutines on a system with limited CPU cores may degrade performance. Adjust the worker/goroutine count accordingly.
+
+3. **File Permissions**:
+   Make sure the program has read/write access to the `generated` folder.
+
+4. **Compilation Errors**:
+   Ensure the correct version of Go (1.16+) is installed.
+
+5. **Unexpected Output**:
+   Verify the input matrix dimensions and the worker count for consistency.
+
+For additional help, please refer to the [Issues section on GitHub](https://github.com/Batman089/rust-go-matrix-parallel-calc/issues) or open a new ticket.
 
 ## Program Structure
 
