@@ -35,7 +35,7 @@ The program consists of the following main components:
 4. Perform parallel matrix multiplication.
 5. Log the computation time.
 
-![Terminal Example](..\doc\terminal_go.png)
+![Terminal Example](../doc/terminal_go.png)
 
 ### Diagram
 
@@ -108,7 +108,7 @@ This parallel approach leverages Go's concurrency model to efficiently perform m
 The program allows users to optimize the number of worker threads based on the system's capabilities and the size of the matrices.
 So that every single calculationsunit of the computer is used to its full potential and provides the best performance possible.
 
-![Parallel Execution](..\doc\running_calc.png)
+![Parallel Execution](../doc/running_calc.png)
 
 ## Performance Benchmark
 

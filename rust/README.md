@@ -39,7 +39,7 @@ The project is organized into the following key components:
 4. Parallel multiplication is performed.
 5. Results and logs are stored in the `generated/log` folder.
 
-![Terminal Example](..\doc\terminal_go.png)
+![Terminal Example](../doc/terminal_rust.png)
 
 ### Diagram
 
@@ -123,7 +123,7 @@ This parallel approach leverages Rust's concurrency model to efficiently perform
 The program allows users to optimize the number of worker threads based on the system's capabilities and the size of the matrices. 
 So that every single calculationsunit of the computer is used to its full potential and provides the best performance possible.
 
-![Terminal Example](..\doc\running_calc.png)
+![Terminal Example](../doc/running_calc.png)
 
 ## Performance Analysis
 
