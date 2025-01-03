@@ -49,13 +49,9 @@ func main() {
 	matrixSizeB := getMatrixSizeFromUser("Matrix B")
 	numWorkers := getNumWorkersFromUser()
 
-	// Create necessary directories
-	os.MkdirAll("./go/generated/log", os.ModePerm)
-	os.MkdirAll("./go/generated/resources", os.ModePerm)
-
 	// File paths for the source matrices
-	sourceMatrixA := "./go/generated/resources/matrixA.txt"
-	sourceMatrixB := "./go/generated/resources/matrixB.txt"
+	sourceMatrixA := "../go/generated/resources/matrixA.txt"
+	sourceMatrixB := "../go/generated/resources/matrixB.txt"
 
 	// Generate two matrices and save them to files using the user input
 	matrixutils.GenerateMatrixToFile(sourceMatrixA, int(matrixSizeA))

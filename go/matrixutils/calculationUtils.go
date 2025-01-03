@@ -76,7 +76,14 @@ func initializeResultMatrix(matrixA [][]int, matrixB [][]int) [][]int {
 }
 
 func createLogFile() (*bufio.Writer, time.Time, error) {
-	calcTimeLog, err := os.Create("./go/generated/log/calcTimeLog.txt")
+	// Ensure the directory exists
+	err := os.MkdirAll("../go/generated/log", os.ModePerm)
+	if err != nil {
+		fmt.Println("Error creating directory:", err)
+		return nil, time.Time{}, err
+	}
+
+	calcTimeLog, err := os.Create("../go/generated/log/calcTimeLog.txt")
 	if err != nil {
 		fmt.Println("Error creating calcTimeLog:", err)
 		return nil, time.Time{}, err
